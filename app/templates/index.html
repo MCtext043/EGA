@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111311">
+  <title>Егор — ведущий мероприятий в Ижевске | Свадьбы, корпоративы, праздники</title>
+  <meta name="description" content="Егор — ведущий мероприятий в Ижевске. Свадьбы, корпоративы, юбилеи и вечеринки с живым общением, музыкой и комфортной атмосферой. Узнайте, свободна ли ваша дата.">
+  <meta property="og:type" content="website"><meta property="og:locale" content="ru_RU">
+  <meta property="og:title" content="Егор — ведущий мероприятий в Ижевске">
+  <meta property="og:description" content="Праздник, в котором легко быть собой. Ведущий, диджей и внимание к настроению гостей.">
+  <meta property="og:url" content="{{ base_url }}/">
+  {% if site.hero_image %}<meta property="og:image" content="{{ base_url }}{{ site.hero_image }}">{% endif %}
+  <link rel="canonical" href="{{ base_url }}/">
+  <link rel="stylesheet" href="/static/site.css">
+  <link rel="stylesheet" href="/static/cookie.css">
+  <script defer src="/static/site.js"></script>
+  {% if metrika_id %}<script>window.ymId={{ metrika_id|tojson }};</script>{% endif %}
+</head>
+<body>
+  <a class="skip" href="#main">Перейти к содержимому</a>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Егор — наверх">ЕГОР<span class="brand-dot">●</span><small>ведущий мероприятий</small></a>
+    <nav class="desktop-nav" aria-label="Основная навигация"><a href="#about">Обо мне</a><a href="#services">Форматы</a><a href="#portfolio">Как я веду</a><a href="#contact">Контакты</a></nav>
+    <a class="header-cta" href="#contact" data-goal="cta">Обсудить дату <span>↗</span></a>
+    <button class="menu-toggle" type="button" aria-label="Открыть меню" aria-expanded="false">☰</button>
+  </header>
+  <nav class="mobile-nav" aria-label="Мобильная навигация" hidden><a href="#about">Обо мне</a><a href="#services">Форматы</a><a href="#portfolio">Как я веду</a><a href="#contact">Контакты</a></nav>
+  <main id="main">
+    <section id="top" class="hero section-wrap">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="live-dot"></span> Ижевск · ведущий мероприятий</p>
+        <h1>Хороший вечер<br>начинается <em>с людей.</em></h1>
+        <p class="hero-intro">Я Егор. Помогаю сделать праздник, на котором гостям легко общаться, смеяться и быть собой — без неловких конкурсов и сценария по бумажке.</p>
+        <div class="hero-actions"><a class="button button-light" href="#contact" data-goal="cta">Узнать, свободна ли дата <span>↗</span></a><a class="text-link" href="#portfolio" data-goal="cta">Посмотреть, как я веду <span>↘</span></a></div>
+        <div class="hero-facts"><span>04 года опыта</span><span>Свой диджей</span><span>Аппаратура в комплекте</span></div>
+      </div>
+      <div class="hero-visual {% if site.hero_image %}has-image{% endif %}" {% if site.hero_image %}style="--visual:url('{{ site.hero_image }}')"{% endif %} role="img" aria-label="{% if site.hero_image %}Егор ведёт мероприятие{% else %}Место для фотографии Егора с мероприятия{% endif %}">
+        {% if not site.hero_image %}<div class="photo-note"><span>ВАШ КАДР ЗДЕСЬ</span><strong>Настоящие<br>эмоции.<br>Ваши люди.</strong><small>Добавьте фотографию Егора в app/content.json</small></div>{% endif %}
+        <div class="visual-badge"><span>живой формат</span><b>без неловкости</b></div>
+      </div>
+      <div class="hero-index">01 / 05 <span>Листайте вниз ↓</span></div>
+    </section>
+
+    <section id="about" class="about section-wrap reveal">
+      <div class="section-heading"><span class="section-number">01 / Знакомство</span><h2>Давайте<br><em>знакомиться.</em></h2></div>
+      <div class="about-grid"><div class="portrait {% if site.portrait_image %}has-image{% endif %}" {% if site.portrait_image %}style="--visual:url('{{ site.portrait_image }}')"{% endif %}>{% if not site.portrait_image %}<span>ФОТО ЕГОРА<br>С МИКРОФОНОМ</span>{% endif %}<div class="portrait-label">Егор / ведущий и бывший диджей</div></div><div class="about-copy"><p class="lead">Привет! Я Егор. Уже 4 года провожу мероприятия и знаю, что лучший сценарий — тот, в котором есть место живому моменту.</p><p>Я начинал как диджей, поэтому хорошо чувствую, когда музыка помогает вечеру набрать темп, а когда важнее дать людям спокойно поговорить.</p><p>Сейчас мы работаем вдвоём с диджеем: заранее обсуждаем ваши пожелания, а на празднике смотрим на настроение гостей. Никого не нужно вытаскивать из-за стола ради конкурса.</p><a class="underline-link" href="#contact" data-goal="cta">Давайте обсудим ваш праздник <span>↗</span></a></div></div>
+    </section>
+
+    <section id="services" class="services section-wrap reveal"><div class="section-heading inline"><div><span class="section-number">02 / Форматы</span><h2>Какой праздник<br><em>планируете?</em></h2></div><p>У каждого вечера свой характер.<br>Начнём с вашего.</p></div><div class="service-list">{% for service in site.services %}<a class="service" href="#contact" data-event="{{ service.name }}" data-goal="cta"><span class="service-num">{{ service.number }}</span><div><small>{{ service.tag }}</small><h3>{{ service.name }}</h3><p>{{ service.description }}</p>{% if service.price %}<strong class="service-price">{{ service.price }}</strong>{% endif %}</div><span class="service-arrow" aria-hidden="true">↗</span></a>{% endfor %}</div></section>
+
+    <section id="portfolio" class="portfolio reveal"><div class="section-wrap"><div class="section-heading inline"><div><span class="section-number">03 / Атмосфера</span><h2>Лучше один раз<br><em>увидеть.</em></h2></div><p>Здесь появятся настоящие кадры<br>и видео с мероприятий.</p></div><div class="media-grid"><div class="video-card"><div class="video-symbol">▶</div><span class="media-kicker">Видео / скоро</span><h3>Как это бывает<br>вживую</h3>{% if site.video_url %}<button type="button" class="play-video" data-video="{{ site.video_url }}">Смотреть видео ↗</button>{% else %}<p>Добавьте ссылку на видеовизитку в app/content.json</p>{% endif %}</div><div class="gallery-card"><span class="media-kicker">Репортаж / реальные события</span>{% if site.gallery %}<div class="gallery-images">{% for item in site.gallery %}<img src="{{ item.src }}" alt="{{ item.alt }}" loading="lazy" decoding="async">{% endfor %}</div>{% else %}<div class="gallery-placeholder"><span>01</span><span>02</span><span>03</span></div><p>Место для фотографий с ваших мероприятий</p>{% endif %}</div></div></div></section>
+
+    <section class="process section-wrap reveal"><div class="section-heading"><span class="section-number">04 / Вместе к празднику</span><h2>Всё начинается<br><em>с разговора.</em></h2></div><div class="steps"><div><span>01</span><h3>Знакомимся</h3><p>Вы рассказываете о дате, формате и гостях. Я узнаю, какой вечер вам близок.</p></div><div><span>02</span><h3>Продумываем вечер</h3><p>Обсуждаем ход программы, музыку и моменты, которые важно учесть.</p></div><div><span>03</span><h3>Проводим</h3><p>В день события держим ритм и реагируем на то, что происходит здесь и сейчас.</p></div></div></section>
+
+    <section class="reviews section-wrap reveal"><span class="section-number">05 / Ваши слова</span><div class="reviews-inner"><h2>Реальные слова<br><em>после реальных вечеров.</em></h2>{% if site.reviews %}<div class="review-list">{% for review in site.reviews %}<blockquote><p>«{{ review.text }}»</p><footer>{{ review.name }}{% if review.date %} · {{ review.date }}{% endif %}{% if review.source %} · <a href="{{ review.source }}" rel="noopener noreferrer">Источник ↗</a>{% endif %}</footer></blockquote>{% endfor %}</div>{% else %}<p>Этот раздел появится, когда будут добавлены отзывы с разрешения клиентов. Никаких выдуманных историй.</p>{% endif %}</div></section>
+
+    <section id="contact" class="contact section-wrap"><div class="contact-copy"><span class="section-number">Давайте начнём</span><h2>Расскажите<br>про <em>вашу дату.</em></h2><p>Напишите пару слов о мероприятии. Я получу вашу заявку и смогу обсудить детали.</p><div class="contact-links">{% if site.phone %}<a href="tel:{{ site.phone|replace(' ', '') }}" data-goal="phone">Позвонить ↗</a>{% endif %}{% if site.vk %}<a href="{{ site.vk }}" data-goal="vk" rel="noopener noreferrer">ВКонтакте ↗</a>{% endif %}{% if site.telegram %}<a href="{{ site.telegram }}" data-goal="telegram" rel="noopener noreferrer">Telegram ↗</a>{% endif %}</div></div><form id="lead-form" class="lead-form"><div class="form-top"><span>Заявка на мероприятие</span><span>01 — 04</span></div><label>Как вас зовут?<input name="name" autocomplete="name" minlength="2" maxlength="100" required placeholder="Ваше имя"></label><label>Как с вами связаться?<input name="contact" autocomplete="tel" minlength="5" maxlength="160" required placeholder="Телефон или email"></label><div class="form-row"><label>Что планируете?<select name="event_type" required><option value="" disabled selected>Выберите формат</option>{% for service in site.services %}<option>{{ service.name }}</option>{% endfor %}<option>Другое мероприятие</option></select></label><label>Дата мероприятия<input name="event_date" type="date" required></label></div><label>Что важно знать? <span class="optional">необязательно</span><textarea name="message" rows="3" maxlength="2000" placeholder="Расскажите о гостях и планах"></textarea></label><div class="trap" aria-hidden="true"><label>Сайт<input name="website" tabindex="-1" autocomplete="off"></label></div><label class="check"><input type="checkbox" name="consent" required><span>Согласен(на) на обработку данных для ответа на заявку. <a href="/privacy" target="_blank" rel="noopener">Политика обработки данных</a></span></label><button class="button button-accent" type="submit">Отправить заявку <span>↗</span></button><p id="form-status" class="form-status" role="status" aria-live="polite"></p></form></section>
+  </main>
+  <footer class="footer section-wrap"><a class="footer-brand" href="#top">ЕГОР<span>●</span></a><p>Ведущий мероприятий · Ижевск</p><a href="/privacy">Обработка персональных данных</a><a href="#top">Наверх ↑</a></footer>
+  {% if metrika_id %}<div class="cookie-banner" id="cookie-banner" hidden><p>Мы используем Яндекс Метрику для анализа посещений. Подробнее — в <a href="/privacy">политике обработки данных</a>.</p><div><button type="button" data-consent="decline">Отклонить</button><button type="button" data-consent="accept">Разрешить</button></div></div>{% endif %}
+  <dialog id="video-dialog" aria-label="Видеовизитка"><button type="button" class="close-video" aria-label="Закрыть">×</button><div id="video-container"></div></dialog>
+</body></html>
+
