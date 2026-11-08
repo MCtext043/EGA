@@ -5,10 +5,14 @@
   "phone": "",
   "vk": "",
   "telegram": "",
-  "hero_image": "",
-  "portrait_image": "",
+  "hero_image": "/static/media/hero-event.webp",
+  "portrait_image": "/static/media/egor-portrait.webp",
   "video_url": "",
-  "gallery": [],
+  "gallery": [
+    {"src": "/static/media/report-01.webp", "alt": "Егор ведёт мероприятие с микрофоном"},
+    {"src": "/static/media/report-02.webp", "alt": "Егор общается с гостями на празднике"},
+    {"src": "/static/media/report-03.webp", "alt": "Егор за диджейским пультом на мероприятии"}
+  ],
   "reviews": [],
   "services": [
     {"number": "01", "name": "Свадьбы", "description": "От камерного ужина до большого праздника. Найдём тон вечера, в котором вам и гостям будет легко быть собой.", "tag": "Для двоих и всех близких", "price": ""},
