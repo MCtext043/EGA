@@ -6,6 +6,8 @@ services:
       DATABASE_PATH: /srv/data/leads.sqlite3
       SITE_URL: ${SITE_URL}
       YANDEX_METRIKA_ID: ${YANDEX_METRIKA_ID:-}
+      ADMIN_PASSWORD_HASH: ${ADMIN_PASSWORD_HASH}
+      ADMIN_SESSION_SECRET: ${ADMIN_SESSION_SECRET}
     volumes:
       - leads_data:/srv/data
     expose:

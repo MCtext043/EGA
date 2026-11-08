@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Заявки — админка Егора</title>
+  <link rel="stylesheet" href="/static/site.css"><link rel="stylesheet" href="/static/admin.css">
+</head>
+<body class="admin-page">
+  <header class="admin-top section-wrap"><a class="brand" href="/">ЕГОР<span class="brand-dot">●</span><small>ведущий мероприятий</small></a><div class="admin-top-actions"><a class="admin-top-link" href="/" target="_blank" rel="noopener">Посмотреть сайт ↗</a><form action="/admin/logout" method="post"><button type="submit" class="admin-logout">Выйти ↗</button></form></div></header>
+  <main class="admin-main section-wrap">
+    <div class="admin-heading"><div><span class="section-number">Панель управления / заявки</span><h1>Ваши<br><em>обращения.</em></h1></div><p>Все заявки сохраняются в базе сайта.<br>Новые обращения появляются здесь сразу после отправки формы.</p></div>
+    <div class="admin-stats"><div><span>Всего заявок</span><strong>{{ total }}</strong></div><div><span>Мероприятия впереди</span><strong>{{ upcoming }}</strong></div><div><span>По текущему поиску</span><strong>{{ found }}</strong></div></div>
+    <section class="admin-list" aria-labelledby="leads-title"><div class="admin-list-heading"><div><span class="section-number">Список обращений</span><h2 id="leads-title">Заявки</h2></div><form class="admin-search" action="/admin" method="get" role="search"><label for="lead-search">Поиск по имени, контакту или формату</label><div><input id="lead-search" name="q" value="{{ q }}" maxlength="100" placeholder="Найти заявку"><button type="submit">Найти ↗</button></div></form></div>
+      {% if leads %}<div class="admin-cards">{% for lead in leads %}<article class="admin-lead"><div class="admin-lead-head"><span>№ {{ lead.id }}</span><time datetime="{{ lead.created_at }}">{{ lead.created_at[:16]|replace('T', ' ') }} UTC</time></div><div class="admin-lead-main"><span class="admin-event">{{ lead.event_type }}</span><h3>{{ lead.name }}</h3><p class="admin-contact">{{ lead.contact }}</p><p class="admin-date">Дата мероприятия: <strong>{{ lead.event_date }}</strong></p></div><details><summary>Детали заявки <span>＋</span></summary><div class="admin-details"><div><small>Комментарий</small><p>{{ lead.message or 'Не указан' }}</p></div><div><small>Источник / канал / кампания</small><p>{{ lead.utm_source or '—' }} / {{ lead.utm_medium or '—' }} / {{ lead.utm_campaign or '—' }}</p></div></div></details></article>{% endfor %}</div>{% else %}<div class="admin-empty"><span>Пока пусто</span><p>{% if q %}По этому запросу ничего не найдено. Попробуйте другое имя или формат.{% else %}Когда посетитель отправит форму, заявка появится здесь.{% endif %}</p>{% if q %}<a href="/admin">Показать все заявки ↗</a>{% endif %}</div>{% endif %}
+      {% if pages > 1 %}<nav class="admin-pages" aria-label="Страницы заявок">{% if page > 1 %}<a href="/admin?page={{ page - 1 }}&q={{ q|urlencode }}">← Назад</a>{% endif %}<span>{{ page }} / {{ pages }}</span>{% if page < pages %}<a href="/admin?page={{ page + 1 }}&q={{ q|urlencode }}">Дальше →</a>{% endif %}</nav>{% endif %}
+    </section>
+  </main>
+</body></html>

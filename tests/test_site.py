@@ -7,7 +7,7 @@ os.environ["DATABASE_PATH"] = str(Path(tempfile.mkdtemp()) / "leads.sqlite3")
 
 from fastapi.testclient import TestClient
 
-from app.main import app
+from app.main import DATABASE_PATH, app
 
 
 client = TestClient(app)
@@ -41,7 +41,7 @@ def test_lead_is_persisted():
     assert response.status_code == 201
     assert response.json()["status"] == "saved"
     assert response.json()["id"] > 0
-    with sqlite3.connect(os.environ["DATABASE_PATH"]) as db:
+    with sqlite3.connect(DATABASE_PATH) as db:
         row = db.execute("SELECT name, contact, utm_source FROM leads WHERE id=?", (response.json()["id"],)).fetchone()
     assert row == ("Анна", "+7 900 123-45-67", "direct")
 

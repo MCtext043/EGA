@@ -5,13 +5,15 @@ import time
 from datetime import date, datetime, timezone
 from pathlib import Path
 from threading import Lock
-from urllib.parse import urlparse
+from urllib.parse import parse_qs
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import FileResponse, HTMLResponse, Response
+from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, Field, field_validator
+
+from app.admin import make_session, valid_session, verify_password
 
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -22,6 +24,8 @@ app = FastAPI(title="Егор — ведущий мероприятий", docs_u
 app.mount("/static", StaticFiles(directory=str(ROOT / "app" / "static")), name="static")
 _attempts: dict[str, list[float]] = {}
 _attempts_lock = Lock()
+_login_attempts: dict[str, list[float]] = {}
+_login_lock = Lock()
 
 
 def content() -> dict:
@@ -108,7 +112,7 @@ def privacy(request: Request):
 
 @app.get("/robots.txt")
 def robots(request: Request):
-    return Response(f"User-agent: *\nAllow: /\nDisallow: /api/\nSitemap: {base_url(request)}/sitemap.xml\n", media_type="text/plain")
+    return Response(f"User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /admin\nSitemap: {base_url(request)}/sitemap.xml\n", media_type="text/plain")
 
 
 @app.get("/sitemap.xml")
@@ -121,6 +125,101 @@ def sitemap(request: Request):
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
+def admin_configured() -> bool:
+    return bool(os.getenv("ADMIN_PASSWORD_HASH")) and len(os.getenv("ADMIN_SESSION_SECRET", "")) >= 32
+
+
+def admin_headers(response: Response) -> Response:
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["X-Robots-Tag"] = "noindex, nofollow"
+    return response
+
+
+def admin_authenticated(request: Request) -> bool:
+    return valid_session(request.cookies.get("admin_session"), os.getenv("ADMIN_SESSION_SECRET", ""))
+
+
+def login_page(request: Request, error: str = "", status_code: int = 200) -> Response:
+    response = templates.TemplateResponse(request, "admin_login.html", {"error": error}, status_code=status_code)
+    return admin_headers(response)
+
+
+@app.get("/admin/login", response_class=HTMLResponse)
+def admin_login_page(request: Request):
+    if not admin_configured():
+        return login_page(request, "Админка ещё не настроена. Укажите пароль и секрет сессии в .env.", 503)
+    if admin_authenticated(request):
+        return admin_headers(RedirectResponse("/admin", status_code=303))
+    return login_page(request)
+
+
+@app.post("/admin/login")
+async def admin_login(request: Request):
+    if not admin_configured():
+        return login_page(request, "Админка ещё не настроена.", 503)
+    origin = request.headers.get("origin", "").rstrip("/")
+    if origin and origin != base_url(request):
+        raise HTTPException(403, "Недопустимый источник запроса")
+    client_ip = request.client.host if request.client else "unknown"
+    now = time.monotonic()
+    with _login_lock:
+        recent = [moment for moment in _login_attempts.get(client_ip, []) if now - moment < 900]
+        if len(recent) >= 5:
+            return login_page(request, "Слишком много попыток. Попробуйте через 15 минут.", 429)
+        _login_attempts[client_ip] = recent
+    fields = parse_qs((await request.body()).decode("utf-8", "replace"), keep_blank_values=True)
+    password = fields.get("password", [""])[0][:200]
+    if not verify_password(password, os.getenv("ADMIN_PASSWORD_HASH", "")):
+        with _login_lock:
+            _login_attempts[client_ip].append(now)
+        return login_page(request, "Неверный пароль.", 401)
+    with _login_lock:
+        _login_attempts.pop(client_ip, None)
+    response = admin_headers(RedirectResponse("/admin", status_code=303))
+    response.set_cookie(
+        "admin_session", make_session(os.environ["ADMIN_SESSION_SECRET"]),
+        max_age=8 * 60 * 60, httponly=True, samesite="strict",
+        secure=base_url(request).startswith("https://"), path="/admin",
+    )
+    return response
+
+
+@app.get("/admin", response_class=HTMLResponse)
+def admin_dashboard(request: Request, q: str = "", page: int = 1):
+    if not admin_configured():
+        return admin_headers(RedirectResponse("/admin/login", status_code=303))
+    if not admin_authenticated(request):
+        return admin_headers(RedirectResponse("/admin/login", status_code=303))
+    init_db()
+    q = q.strip()[:100]
+    page = max(1, min(page, 10000))
+    where = "WHERE name LIKE ? OR contact LIKE ? OR event_type LIKE ?" if q else ""
+    params = (f"%{q}%",) * 3 if q else ()
+    with sqlite3.connect(DATABASE_PATH) as db:
+        db.row_factory = sqlite3.Row
+        total = db.execute("SELECT COUNT(*) FROM leads").fetchone()[0]
+        found = db.execute(f"SELECT COUNT(*) FROM leads {where}", params).fetchone()[0]
+        upcoming = db.execute("SELECT COUNT(*) FROM leads WHERE event_date >= ?", (date.today().isoformat(),)).fetchone()[0]
+        leads = [dict(row) for row in db.execute(
+            f"SELECT * FROM leads {where} ORDER BY id DESC LIMIT 50 OFFSET ?", (*params, (page - 1) * 50)
+        ).fetchall()]
+    response = templates.TemplateResponse(request, "admin_dashboard.html", {
+        "leads": leads, "total": total, "found": found, "upcoming": upcoming,
+        "q": q, "page": page, "pages": max(1, (found + 49) // 50),
+    })
+    return admin_headers(response)
+
+
+@app.post("/admin/logout")
+def admin_logout(request: Request):
+    origin = request.headers.get("origin", "").rstrip("/")
+    if origin and origin != base_url(request):
+        raise HTTPException(403, "Недопустимый источник запроса")
+    response = admin_headers(RedirectResponse("/admin/login", status_code=303))
+    response.delete_cookie("admin_session", path="/admin")
+    return response
 
 
 @app.post("/api/leads", status_code=201)

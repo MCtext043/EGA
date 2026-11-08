@@ -9,10 +9,17 @@
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
-.\.venv\Scripts\python.exe -m uvicorn app.main:app --reload
+.\.venv\Scripts\python.exe scripts/set_admin_password.py
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --env-file .env
 ```
 
 Откройте `http://127.0.0.1:8000`. Для проверки: `.\.venv\Scripts\python.exe -m pytest -q`. На Linux используйте `python3 -m venv .venv` и `.venv/bin/python`.
+
+## Админка и просмотр заявок
+
+Админка доступна по адресу `/admin`. Без входа заявки и контакты клиентов не показываются. Для первого запуска или смены пароля выполните из корня проекта `python scripts/set_admin_password.py` (в Windows — `.\.venv\Scripts\python.exe scripts/set_admin_password.py`). Скрипт создаёт или обновляет `.env`, записывает только хеш пароля и секрет сессии, затем завершает прежние сессии. Запускайте локальный сервер командой `.\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --env-file .env`. В Linux используйте `.venv/bin/python`.
+
+В админке можно искать заявки по имени, контакту и формату, раскрывать комментарий и UTM-метки. Показывается по 50 записей на странице. Сессия длится 8 часов. Админка не отправляет уведомления: новые заявки появляются в списке после их сохранения в SQLite.
 
 ## Редактирование сайта
 
@@ -34,7 +41,7 @@ python -m venv .venv
 
 ## Деплой на Linux VPS
 
-Понадобятся Docker с Compose, домен с A-записью на IP сервера и открытые порты 80/443. Скопируйте проект на сервер, создайте `.env` по `.env.example`, укажите `DOMAIN` и `SITE_URL=https://DOMAIN`. При наличии счётчика добавьте `YANDEX_METRIKA_ID`. Затем выполните `chmod +x deploy.sh && ./deploy.sh`. Скрипт проверяет конфигурацию, поднимает FastAPI и Caddy, создаёт таблицу заявок и проверяет `/health`. Caddy получает HTTPS-сертификат автоматически, когда DNS указывает на сервер. Повторный запуск не удаляет базу. Резервируйте Docker volume `leads_data` перед изменениями на сервере.
+Понадобятся Docker с Compose, домен с A-записью на IP сервера и открытые порты 80/443. Скопируйте проект на сервер, создайте `.env` по `.env.example`, укажите `DOMAIN` и `SITE_URL=https://DOMAIN`, затем выполните `python3 scripts/set_admin_password.py`. При наличии счётчика добавьте `YANDEX_METRIKA_ID`. Затем выполните `chmod +x deploy.sh && ./deploy.sh`. Скрипт проверяет конфигурацию, поднимает FastAPI и Caddy, создаёт таблицу заявок и проверяет `/health`. Caddy получает HTTPS-сертификат автоматически, когда DNS указывает на сервер. Повторный запуск не удаляет базу. Резервируйте Docker volume `leads_data` перед изменениями на сервере.
 
 ## Что требуется до публикации
 

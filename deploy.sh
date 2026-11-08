@@ -11,6 +11,8 @@ set +a
 [[ -n "${DOMAIN:-}" && -n "${SITE_URL:-}" ]] || { echo 'Ошибка: заполните DOMAIN и SITE_URL в .env.' >&2; exit 1; }
 [[ "$SITE_URL" == "https://$DOMAIN" ]] || { echo 'Ошибка: SITE_URL должен быть https://DOMAIN.' >&2; exit 1; }
 [[ "$DOMAIN" != example.ru ]] || { echo 'Ошибка: замените пример домена.' >&2; exit 1; }
+admin_secret=${ADMIN_SESSION_SECRET:-}
+[[ -n "${ADMIN_PASSWORD_HASH:-}" && ${#admin_secret} -ge 32 ]] || { echo 'Ошибка: настройте пароль администратора через python3 scripts/set_admin_password.py.' >&2; exit 1; }
 
 docker compose config --quiet
 docker compose up -d --build --wait

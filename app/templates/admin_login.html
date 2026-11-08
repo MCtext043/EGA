@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Вход в админку — Егор</title>
+  <link rel="stylesheet" href="/static/site.css"><link rel="stylesheet" href="/static/admin.css">
+</head>
+<body class="admin-page">
+  <header class="admin-top section-wrap"><a class="brand" href="/">ЕГОР<span class="brand-dot">●</span><small>ведущий мероприятий</small></a><a class="admin-top-link" href="/">На сайт ↗</a></header>
+  <main class="admin-login-wrap section-wrap">
+    <div class="admin-login-intro"><span class="section-number">Личный доступ / 01</span><h1>Заявки<br><em>под рукой.</em></h1><p>Войдите, чтобы увидеть обращения с сайта и контактные данные клиентов.</p></div>
+    <div class="admin-login-card"><div class="admin-card-top"><span>Администратор</span><span>Егор / Ижевск</span></div><h2>Вход в админку</h2>{% if error %}<p class="admin-error" role="alert">{{ error }}</p>{% endif %}<form action="/admin/login" method="post"><label for="admin-password">Пароль</label><input id="admin-password" name="password" type="password" autocomplete="current-password" required maxlength="200" placeholder="Введите пароль"><button class="button button-accent" type="submit">Открыть заявки <span>↗</span></button></form><p class="admin-login-note">Сессия действует 8 часов. Доступ есть только у владельца пароля.</p></div>
+  </main>
+</body></html>
