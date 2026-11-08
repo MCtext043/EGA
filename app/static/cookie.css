@@ -1,5 +1,7 @@
 .cookie-banner[hidden]{display:none}
-.cookie-banner{position:fixed;z-index:30;left:24px;right:24px;bottom:24px;max-width:620px;background:#f0f1e8;color:#1b2418;padding:20px 23px;box-shadow:0 14px 60px #0008;display:flex;gap:20px;align-items:center}
+.cookie-banner{position:fixed;z-index:30;left:24px;right:24px;bottom:24px;max-width:620px;background:#f5eeec;color:#20171b;padding:20px 23px;box-shadow:0 14px 60px #0008;display:flex;gap:20px;align-items:center}
 .cookie-banner p{font-size:12px;line-height:1.6;margin:0}.cookie-banner a{text-decoration:underline}
-.cookie-banner>div{display:flex;gap:7px;flex-shrink:0}.cookie-banner button{border:1px solid #263322;background:transparent;color:#1b2418;padding:10px 12px;font-size:11px;font-weight:700}.cookie-banner button:last-child{background:#d6ff5c}
+.cookie-banner>div{display:flex;gap:7px;flex-shrink:0}.cookie-banner button{border:1px solid #582f3c;background:transparent;color:#20171b;padding:10px 12px;font-size:11px;font-weight:700}.cookie-banner button:last-child{background:#b91b39}
 @media(max-width:600px){.cookie-banner{left:12px;right:12px;bottom:12px;display:block}.cookie-banner>div{margin-top:12px}}
+
+.cookie-banner button:last-child{color:#fff7f5}
